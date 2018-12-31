@@ -1,12 +1,12 @@
 'use strict';
 
-// tag::vars[]
+import 'bootstrap/dist/css/bootstrap.css';
+import { Button } from 'reactstrap';
+
 const React = require('react');
 const ReactDOM = require('react-dom');
 const client = require('./client');
-// end::vars[]
 
-// tag::app[]
 class App extends React.Component {
 
 	constructor(props) {
@@ -26,9 +26,6 @@ class App extends React.Component {
 		)
 	}
 }
-// end::app[]
-
-// tag::item-list[]
 class ItemList extends React.Component{
 	render() {
 		const items = this.props.items.map(item =>
@@ -48,25 +45,18 @@ class ItemList extends React.Component{
 		)
 	}
 }
-// end::item-list[]
-
-// tag::item[]
 class Item extends React.Component{
 	render() {
 		return (
 			<tr>
-				<td>{this.props.item.title}</td>
+				<td><Button color="primary">{this.props.item.title}</Button>{' '}</td>
 				<td>{this.props.item.text}</td>
 				<td>{this.props.item.price.value} {this.props.item.price.currencyCode}</td>
 			</tr>
 		)
 	}
 }
-// end::item[]
-
-// tag::render[]
 ReactDOM.render(
 	<App />,
 	document.getElementById('react')
 )
-// end::render[]
