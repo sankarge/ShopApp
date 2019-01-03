@@ -26,15 +26,18 @@ class Filters extends React.Component {
 		);
 		return (
 			<div>
+				<hr></hr>
 				<Navbar light>
 					<h5 >Filters</h5>
 					<NavbarToggler onClick={this.toggle} />
 					<Collapse isOpen={this.state.isOpen} navbar>
+						<hr></hr>
 						<Nav>
 							<Filter />
 						</Nav>
 					</Collapse>
 				</Navbar>
+				<hr></hr>
 			</div>
 		)
 	}
@@ -121,10 +124,6 @@ class Filter extends React.Component {
 				</Form>
 			</NavItem>
 		)
-	}
-
-	onChange() {
-
 	}
 }
 

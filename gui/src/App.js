@@ -10,19 +10,29 @@ import { Container, Row, Col } from 'reactstrap';
 
 class App extends React.Component {
 
+	constructor(props) {
+		super(props);
+		this.state = {category: 'http://localhost:8080/api/items'};
+		this.handleCategoryChange = this.handleCategoryChange.bind(this);
+	}
+
+	handleCategoryChange(newCategory) {
+		this.setState({category : newCategory+'/items'});
+	}
+
 	render() {
+		console.log('Updating category' + this.state.category);
 		return (
 			<div>
 				<Header/>
-				<hr color='white'></hr>
 				<Container fluid>
 					<Row>
 						<Col md='2'>
-							<CategoryList/>
+							<CategoryList onCategoryChange={this.handleCategoryChange}/>
 							<Filters/>
 						</Col>
 						<Col>
-							<ItemList category='SmartPhones'/>
+							<ItemList category={this.state.category}/>
 						</Col>
 					</Row>					
 				</Container>
