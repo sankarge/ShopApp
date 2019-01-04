@@ -42,6 +42,7 @@ class Filters extends React.Component {
 		)
 	}
 }
+
 class Filter extends React.Component {
 	render() {
 		return (

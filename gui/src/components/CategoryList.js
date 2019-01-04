@@ -40,7 +40,8 @@ class CategoryList extends React.Component {
 	render() {
 		const categories = this.state.categories.map(category =>
 			<ButtonGroup>
-				<Button color='orange' id={category._links.self.href} onClick={this.handleChange}> {category.title} </Button>
+				<Button color='orange' id={category._links.self.href} onClick={this.handleChange}> {category.title}
+				</Button>
 			</ButtonGroup>
 		);
 		return (

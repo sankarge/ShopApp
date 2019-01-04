@@ -1,8 +1,8 @@
 import 'bootstrap/dist/css/bootstrap.css';
 
 import {
-	Card, Button, CardImg, CardTitle, CardText, CardDeck, CardColumns,
-	CardSubtitle, CardBody
+	Card, Button, CardImg, CardTitle, CardText, CardDeck, CardGroup, CardColumns,
+	CardSubtitle, CardBody, Container, Row, Col
 } from 'reactstrap';
 
 const React = require('react');
@@ -16,15 +16,15 @@ class ItemList extends React.Component {
 	}
 
 	componentWillMount() {
-		console.log('ItemList category' + this.props.category);
-		client({ method: 'GET', path: this.props.category }).done(response => {
-			this.setState({ items: response.entity._embedded.items });
-		});
+		if (this.props.category != '') {
+			client({ method: 'GET', path: this.props.category }).done(response => {
+				this.setState({ items: response.entity._embedded.items });
+			});
+		}
 	}
 
-	componentDidUpdate(prevProps, prevState) {
+	componentDidUpdate(prevProps) {
 		if (prevProps.category !== this.props.category) {
-			console.log('ItemList componentDidUpdate' + this.props.category);
 			client({ method: 'GET', path: this.props.category }).done(response => {
 				this.setState({ items: response.entity._embedded.items });
 			});
@@ -32,23 +32,55 @@ class ItemList extends React.Component {
 	}
 
 	render() {
-		const items = this.state.items.map(item =>
-			<Item key={item._links.self.href} item={item} />
-		);
-		return (
-			<div>
-				<hr></hr>
-				<CardColumns>
+		if (this.state.items && this.state.items.length > 0) {
+
+			var itemArray = this.state.items;
+			var itemPerRow = 4;
+			var itemGrouped = itemArray.map((item, index) => {
+				return index % itemPerRow === 0 ? itemArray.slice(index, index + itemPerRow) : null;
+			}).filter(function (item) {
+				return item;
+			});
+
+
+			const items = itemGrouped.map(group =>
+				<GroupItem group={group} />
+			);
+			return (
+				<div>
+					<hr></hr>
 					{items}
-				</CardColumns>
-			</div>
-		)
+				</div>
+			)
+		}
+		return null;
 	}
 }
+
+class GroupItem extends React.Component {
+
+	render() {
+		const items = this.props.group.map(item =>
+			<Item key={item._links.self.href} item={item} />
+		);
+
+		return (
+			<div>
+				<CardDeck>
+					{items}
+				</CardDeck>
+				<br></br>
+			</div>
+		)
+
+	}
+}
+
 class Item extends React.Component {
 	render() {
 		return (
 			<Card>
+				{/* <CardImg top width="100%" src="https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97180&w=318&h=180" /> */}
 				<CardBody>
 					<CardTitle>{this.props.item.title}</CardTitle>
 					<CardText>{this.props.item.text}</CardText>

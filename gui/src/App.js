@@ -12,7 +12,7 @@ class App extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {category: 'http://localhost:8080/api/items'};
+		this.state = {category: ''};
 		this.handleCategoryChange = this.handleCategoryChange.bind(this);
 	}
 
