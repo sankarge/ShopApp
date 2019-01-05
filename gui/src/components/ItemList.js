@@ -1,55 +1,117 @@
-import 'bootstrap/dist/css/bootstrap.css';
-
-import {
-	Card, Button, CardImg, CardTitle, CardText, CardDeck, CardGroup, CardColumns,
-	CardSubtitle, CardBody, Container, Row, Col
-} from 'reactstrap';
-
-const React = require('react');
-const client = require('./client');
+import React from 'react';
+import { Badge, Button, Card, CardBody, CardDeck, CardText, CardTitle, Col, Container, Row } from 'reactstrap';
+import client from './client';
+import PaginationHandler from './PaginationHandler';
+import SortHandler from './SortHandler';
 
 class ItemList extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = { items: [] };
+		this.state = {
+			items: [],
+			currentLink: '',
+			size: '8',
+			sort: '',
+			links: {}			
+		};
+		this.onNavigate = this.onNavigate.bind(this);
+		this.updateAll = this.updateAll.bind(this);
+		this.updateLinks = this.updateLinks.bind(this);
+		this.onSort = this.onSort.bind(this);
+		this.onMinMaxChange = this.onMinMaxChange.bind(this);
 	}
 
-	componentWillMount() {
-		if (this.props.category != '') {
-			client({ method: 'GET', path: this.props.category }).done(response => {
-				this.setState({ items: response.entity._embedded.items });
-			});
+	componentDidUpdate(prevProps, prevState) {
+		if (prevProps.categoryId !== this.props.categoryId ||
+			prevProps.minMax !== this.props.minMax || 
+			prevState.sort !== this.state.sort) {
+			this.onUpdateCategoryOrSortOrMinMax();
 		}
+		if (prevState.currentLink != this.state.currentLink) {
+			this.onUpdatePaging();
+		}
+		window.scrollTo(0, 0);
 	}
 
-	componentDidUpdate(prevProps) {
-		if (prevProps.category !== this.props.category) {
-			client({ method: 'GET', path: this.props.category }).done(response => {
-				this.setState({ items: response.entity._embedded.items });
-			});
-		}
+	onUpdateCategoryOrSortOrMinMax() {
+		client({ method: 'GET', path: this.getItemsURI() }).done(this.updateAll);
+	}
+
+	onUpdatePaging() {
+		client({ method: 'GET', path: this.state.currentLink }).done(this.updateLinks);
+	}
+
+	getItemsURI() {
+		var baseURI = this.props.host + '/api/items/search/findByPriceBetween?';
+		var withMinMax = baseURI + 'min=' + this.props.minMax.min + '&max=' + this.props.minMax.max;
+		var withSort = withMinMax + '&sort=' + this.state.sort;
+		var finalURI = withSort + '&size=' + this.state.size;
+		return finalURI;
+	}
+
+	updateAll(response) {
+		this.setState({
+			items: response.entity._embedded.items,
+			links: response.entity._links,
+		});
+	}
+
+	updateLinks(response) {
+		this.setState({
+			items: response.entity._embedded.items,
+			links: response.entity._links,
+		});
+	}
+
+	onNavigate(newLink) {
+		this.setState({ currentLink: newLink });
+	}
+
+	onSort(sortBy) {
+		this.setState({ sort: sortBy });
+	}
+
+	onMinMaxChange(minMax) {
+		this.setState({ minMax: minMax });
+	}
+
+	getGroupedItem() {
+		var itemArray = this.state.items;
+		var itemPerRow = 4;
+		var itemGrouped = itemArray.map((item, index) => {
+			return index % itemPerRow === 0 ? itemArray.slice(index, index + itemPerRow) : null;
+		}).filter(function (item) {
+			return item;
+		});
+		return itemGrouped;
 	}
 
 	render() {
 		if (this.state.items && this.state.items.length > 0) {
-
-			var itemArray = this.state.items;
-			var itemPerRow = 4;
-			var itemGrouped = itemArray.map((item, index) => {
-				return index % itemPerRow === 0 ? itemArray.slice(index, index + itemPerRow) : null;
-			}).filter(function (item) {
-				return item;
+			const cardDeckGroup = this.getGroupedItem().map((group, i) => {
+				return <CardDeckGroup key={'card-deck-group' + i} group={group} />
 			});
-
-
-			const items = itemGrouped.map(group =>
-				<GroupItem group={group} />
-			);
 			return (
 				<div>
-					<hr></hr>
-					{items}
+					<br></br>
+					<Container fluid>
+						<Row>
+							<Col>
+								<SortHandler onSort={this.onSort} />
+							</Col>
+						</Row>
+						<Row>
+							<Col>
+								{cardDeckGroup}
+							</Col>
+						</Row>
+						<Row>
+							<Col>
+								<PaginationHandler onNavigate={this.onNavigate} links={this.state.links} />
+							</Col>
+						</Row>
+					</Container>
 				</div>
 			)
 		}
@@ -57,13 +119,9 @@ class ItemList extends React.Component {
 	}
 }
 
-class GroupItem extends React.Component {
-
+class CardDeckGroup extends React.Component {
 	render() {
-		const items = this.props.group.map(item =>
-			<Item key={item._links.self.href} item={item} />
-		);
-
+		const items = this.props.group.map(item => <Item key={item._links.self.href} item={item} />);
 		return (
 			<div>
 				<CardDeck>
@@ -72,7 +130,6 @@ class GroupItem extends React.Component {
 				<br></br>
 			</div>
 		)
-
 	}
 }
 
@@ -84,7 +141,7 @@ class Item extends React.Component {
 				<CardBody>
 					<CardTitle>{this.props.item.title}</CardTitle>
 					<CardText>{this.props.item.text}</CardText>
-					<CardText className="text-right">{this.props.item.price.value}{this.props.item.price.currencyCode}</CardText>
+					<h5><Badge color="info">{this.props.item.price}  'EUR</Badge></h5>
 					<Button>View</Button>
 				</CardBody>
 			</Card>

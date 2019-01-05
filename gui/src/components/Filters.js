@@ -1,7 +1,4 @@
-import {
-	Container, Row, Col, ButtonGroup, Button, ListGroup, ListGroupItem, Collapse, NavbarToggler, Navbar, Nav, NavItem,
-	Form, FormGroup, Label, Input, NavLink
-} from 'reactstrap';
+import { Button, Col, Collapse, Container, Form, Input, Nav, Navbar, NavbarToggler, NavItem, Row } from 'reactstrap';
 
 const React = require('react');
 const client = require('./client');
@@ -10,8 +7,11 @@ class Filters extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = { filters: [], isOpen: true };
+		this.state = { isOpen: true, min: 0, max: 5000 };
 		this.toggle = this.toggle.bind(this);
+		this.handleMinUpdate = this.handleMinUpdate.bind(this);
+		this.handleMaxUpdate = this.handleMaxUpdate.bind(this);
+		this.onFilterApply = this.onFilterApply.bind(this);
 	}
 
 	toggle() {
@@ -20,10 +20,21 @@ class Filters extends React.Component {
 		});
 	}
 
+	handleMinUpdate(e) {
+		e.preventDefault();
+		this.setState({ min: e.target.value });
+	}
+
+	handleMaxUpdate(e) {
+		e.preventDefault();
+		this.setState({ max: e.target.value });
+	}
+
+	onFilterApply(event) {
+		this.props.onMinMaxChange({ min: this.state.min, max: this.state.max });
+	}
+
 	render() {
-		const filters = this.state.filters.map(filter =>
-			<Filter key={filter._links.self.href} filter={filter} />
-		);
 		return (
 			<div>
 				<hr></hr>
@@ -33,97 +44,35 @@ class Filters extends React.Component {
 					<Collapse isOpen={this.state.isOpen} navbar>
 						<hr></hr>
 						<Nav>
-							<Filter />
+							<NavItem>
+								<Form>
+									<Container fluid>
+										<Row>
+											<Col>
+												<label>Price min </label>
+												<Input name='priceMin' ref='priceMin' bsSize='sm' type="text" onChange={this.handleMinUpdate} value={this.state.min} />
+											</Col>
+										</Row>
+										<Row>
+											<Col>
+												<label>Price max </label>
+												<Input name='priceMax' bsSize='sm' type="text" onChange={this.handleMaxUpdate} value={this.state.max} />
+											</Col>
+										</Row>
+										<Row>
+											<Col>
+												<hr></hr>
+												<Button outline color="secondary" onClick={this.onFilterApply}>Apply</Button>
+											</Col>
+										</Row>
+									</Container>
+								</Form>
+							</NavItem>
 						</Nav>
 					</Collapse>
 				</Navbar>
 				<hr></hr>
 			</div>
-		)
-	}
-}
-
-class Filter extends React.Component {
-	render() {
-		return (
-			<NavItem>
-				<Form>
-					<Container fluid>
-						<Row>
-							<Col>
-								<label>Price </label>
-							</Col>
-						</Row>
-						<Row>
-							<Col>
-								<FormGroup check inline>
-									<Label check>
-										<Input type="checkbox" /> 0 - 100
-										</Label>
-								</FormGroup>
-							</Col>
-						</Row>
-						<Row>
-							<Col>
-								<FormGroup check inline>
-									<Label check>
-										<Input type="checkbox" /> 100 - 200
-										</Label>
-								</FormGroup>
-							</Col>
-						</Row>
-						<Row>
-							<Col>
-								<FormGroup check inline>
-									<Label check>
-										<Input type="checkbox" /> 200 - 500
-										</Label>
-								</FormGroup>
-							</Col>
-						</Row>
-						<Row>
-							<Col>
-								<FormGroup check inline>
-									<Label check>
-										<Input type="checkbox" /> 500 - max
-											</Label>
-								</FormGroup>
-							</Col>
-						</Row>
-						<Row>
-							<Col>
-								<hr></hr>
-								<label>Rating</label>
-							</Col>
-						</Row>
-						<Row>
-							<Col>
-								<button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-									<span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-								</button>
-								<button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-									<span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-								</button>
-								<button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-									<span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-								</button>
-								<button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-									<span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-								</button>
-								<button type="button" class="btn btn-warning btn-sm" aria-label="Left Align">
-									<span class="glyphicon glyphicon-star" aria-hidden="true"></span>
-								</button>
-							</Col>
-						</Row>
-						<Row>
-							<Col>
-								<hr></hr>
-								<Button outline color="secondary">Apply</Button>
-							</Col>
-						</Row>
-					</Container>
-				</Form>
-			</NavItem>
 		)
 	}
 }

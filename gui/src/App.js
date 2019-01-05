@@ -1,40 +1,44 @@
-import React from'react';
 import 'bootstrap/dist/css/bootstrap.css';
+import React from 'react';
+import { Col, Container, Row } from 'reactstrap';
+import CategoryList from './components/CategoryList';
+import Filters from './components/Filters';
+import Header from './components/Header';
+import ItemList from './components/ItemList';
 
-import Header from'./components/Header';
-import CategoryList from'./components/CategoryList';
-import ItemList from'./components/ItemList';
-import Filters from './components/Filters'
 
-import { Container, Row, Col } from 'reactstrap';
 
 class App extends React.Component {
 
 	constructor(props) {
 		super(props);
-		this.state = {category: ''};
+		this.state = { categoryId: '', host: 'http://localhost:8080', minMax: { min: 0, max: 5000 } };
 		this.handleCategoryChange = this.handleCategoryChange.bind(this);
+		this.handleMinMaxChange = this.handleMinMaxChange.bind(this);
 	}
 
-	handleCategoryChange(newCategory) {
-		this.setState({category : newCategory+'/items'});
+	handleCategoryChange(newCategoryId) {
+		this.setState({ categoryId: newCategoryId });
+	}
+
+	handleMinMaxChange(minMax) {
+		this.setState({ minMax: minMax });
 	}
 
 	render() {
-		console.log('Updating category' + this.state.category);
 		return (
 			<div>
-				<Header/>
+				<Header />
 				<Container fluid>
 					<Row>
 						<Col md='2'>
-							<CategoryList onCategoryChange={this.handleCategoryChange}/>
-							<Filters/>
+							<CategoryList host={this.state.host} onCategoryChange={this.handleCategoryChange} />
+							<Filters minMax={this.state.minMax} onMinMaxChange={this.handleMinMaxChange}/>
 						</Col>
 						<Col>
-							<ItemList category={this.state.category}/>
+							<ItemList host={this.state.host} categoryId={this.state.categoryId} minMax={this.state.minMax}/>
 						</Col>
-					</Row>					
+					</Row>
 				</Container>
 			</div>
 		)

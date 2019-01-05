@@ -1,10 +1,6 @@
-import {
-	ButtonGroup, Button, ListGroup, ListGroupItem,
-	Collapse, NavbarToggler, Navbar, Nav, NavItem, NavLink
-} from 'reactstrap';
-
-const React = require('react');
-const client = require('./client');
+import React from 'react';
+import client from './client';
+import { Button, Collapse, NavbarToggler, Navbar, Nav } from 'reactstrap';
 
 class CategoryList extends React.Component {
 
@@ -22,31 +18,36 @@ class CategoryList extends React.Component {
 	}
 
 	componentDidMount() {
-		client({ method: 'GET', path: 'http://localhost:8080/api/categories' }).done(response => {
+		client({ method: 'GET', path: this.getURI() }).done(response => {
 			this.setState({ categories: response.entity._embedded.categories }, () => {
 				this.setDefaultCategory(this.state.categories[0]);
 			});
 		});
 	}
 
+	getURI(){
+		return this.props.host + '/api/categories';
+	}
+
 	setDefaultCategory(category) {
-		this.props.onCategoryChange(category._links.self.href);
+		this.props.onCategoryChange(this.getCategoryId(category._links.self.href));
 	}
 
 	handleChange(e) {
-		this.props.onCategoryChange(e.target.id);
+		this.props.onCategoryChange(this.getCategoryId(e.target.id));
+	}
+
+	getCategoryId(input){
+		return input.split("/").pop();
 	}
 
 	render() {
 		const categories = this.state.categories.map(category =>
-			<ButtonGroup>
-				<Button color='orange' id={category._links.self.href} onClick={this.handleChange}> {category.title}
-				</Button>
-			</ButtonGroup>
+				<Button color='white' id={category._links.self.href} onClick={this.handleChange}> {category.title}</Button>
 		);
 		return (
 			<div>
-				<hr></hr>
+				<br></br>
 				<Navbar light>
 					<h5>Products</h5>
 					<NavbarToggler onClick={this.toggle} />

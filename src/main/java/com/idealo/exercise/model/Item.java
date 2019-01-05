@@ -7,6 +7,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
 
 @Data
 @Entity
@@ -26,12 +27,16 @@ public class Item {
     private String text;
 
     @NotNull
-    private Money price;
+    private BigDecimal price;
 
     public Item() {
     }
 
-    public Item(Category category, String title, String text, Money price) {
+    public Item(Category category, String title, String text, long price) {
+        this(category, title, text, BigDecimal.valueOf(price));
+    }
+
+    private Item(Category category, String title, String text, BigDecimal price) {
         this.category = category;
         this.title = title;
         this.text = text;
