@@ -1,0 +1,4 @@
+IntegrationTest,BetweenStartItemCreatedForIntegrationTest,This item is used in integration test to validate,501
+IntegrationTest,BetweenEndItemCreatedForIntegrationTest,This item is used in integration test to validate,502
+IntegrationTest,CheapestItemCreatedForIntegrationTest,This item is used in integration test to validate,1
+IntegrationTest,CostliestItemCreatedForIntegrationTest,This item is used in integration test to validate,9000

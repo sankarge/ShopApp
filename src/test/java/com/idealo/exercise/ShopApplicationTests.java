@@ -111,8 +111,8 @@ public class ShopApplicationTests {
                 .andExpect(jsonPath("$.page").exists())
                 .andExpect(jsonPath("$.page.number").value(0))
                 .andExpect(jsonPath("$.page.size").value(1))
-                .andExpect(jsonPath("$.page.totalElements").value(16))
-                .andExpect(jsonPath("$.page.totalPages").value(16));
+                .andExpect(jsonPath("$.page.totalElements").value(4))
+                .andExpect(jsonPath("$.page.totalPages").value(4));
     }
 
     private MockHttpServletRequestBuilder prepareRequest(String min, String max, String pageSize) {

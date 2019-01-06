@@ -25,12 +25,9 @@ public class SampleRecordsLoader implements CommandLineRunner {
 
     private final CategoryRepository categoryRepository;
 
-    private ItemRepository itemRepository;
-
     @Autowired
-    public SampleRecordsLoader(CategoryRepository categoryRepository, ItemRepository itemRepository) {
+    public SampleRecordsLoader(CategoryRepository categoryRepository) {
         this.categoryRepository = categoryRepository;
-        this.itemRepository = itemRepository;
     }
 
     @Override

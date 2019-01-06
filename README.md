@@ -77,3 +77,7 @@ DELETE |	CrudRepository<ID,T>.delete(ID id)
 Element | Class % | Method% | Line %|
 |---- |-------|---- |-------|
 exercise	|100% (5/5)|	76% (20/26)|	89% (61/68)|
+
+##### Responsiveness
+
+Tested mostly with [this site](http://responsivedesignchecker.com/)
