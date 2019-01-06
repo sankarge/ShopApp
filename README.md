@@ -41,7 +41,7 @@ Run "ShopApplication.java" from IDE or execute "./mvnw spring-boot:run" from ter
 And navigate to http://localhost:8080
 
 ##### Note
- The mvn build also copies static html/js/css build files generated from ./gui/build to target/static/
+ During `mvn clean install` the `maven-resources-plugin` will copy static html/js/css build files generated from ./gui/build to target/static/
  to serve as a "Single Page APP" within a webserver[Spring boot's tomcat in this case].
 
  So there is no need to run separate web-server for fron-end.
