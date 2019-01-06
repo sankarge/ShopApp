@@ -70,3 +70,10 @@ DELETE |	CrudRepository<ID,T>.delete(ID id)
 ##### Sample Records
 
 `SampleRecordsLoader.java` generates sample mock records to explore the application.
+
+
+##### Integration tests with decent coverage
+
+Element | Class % | Method% | Line %|
+|---- |-------|---- |-------|
+exercise	|100% (5/5)|	76% (20/26)|	89% (61/68)|
