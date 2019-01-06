@@ -26,6 +26,10 @@ public class Category {
         this.title = title;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
     public void setItems(Collection<Item> items) {
         this.items = items;
     }
