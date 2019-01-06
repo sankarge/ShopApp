@@ -25,7 +25,7 @@ class CategoryList extends React.Component {
 		});
 	}
 
-	getURI(){
+	getURI() {
 		return this.props.host + '/api/categories';
 	}
 
@@ -37,13 +37,13 @@ class CategoryList extends React.Component {
 		this.props.onCategoryChange(this.getCategoryId(e.target.id));
 	}
 
-	getCategoryId(input){
+	getCategoryId(input) {
 		return input.split("/").pop();
 	}
 
 	render() {
 		const categories = this.state.categories.map(category =>
-				<Button color='white' id={category._links.self.href} onClick={this.handleChange}> {category.title}</Button>
+				<Button size='sm' color='white' id={category._links.self.href} onClick={this.handleChange}> {category.title}</Button>
 		);
 		return (
 			<div>

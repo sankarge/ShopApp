@@ -1,5 +1,5 @@
 import React from 'react';
-import { Pagination, PaginationItem, PaginationLink, Col, Row, Label, CustomInput, Container } from 'reactstrap';
+import { Pagination, PaginationItem, PaginationLink, Col, Row, Label, Input, CustomInput, Container } from 'reactstrap';
 
 class PaginationHandler extends React.Component {
 
@@ -9,6 +9,7 @@ class PaginationHandler extends React.Component {
 		this.handleNavPrev = this.handleNavPrev.bind(this);
 		this.handleNavNext = this.handleNavNext.bind(this);
 		this.handleNavLast = this.handleNavLast.bind(this);
+		this.handlePageSizeChange = this.handlePageSizeChange.bind(this);
 	}
 
 	handleNavFirst(e) {
@@ -29,6 +30,11 @@ class PaginationHandler extends React.Component {
 	handleNavLast(e) {
 		e.preventDefault();
 		this.props.onNavigate(this.props.links.last.href);
+	}
+
+	handlePageSizeChange(e) {
+		e.preventDefault();
+		this.props.onPageSizeChange(e.target.value);
 	}
 
 	getDynamicNavLinks() {
@@ -59,9 +65,26 @@ class PaginationHandler extends React.Component {
 	render() {
 		return (
 			<div class='float-right'>
-				<Pagination>
-					{this.getDynamicNavLinks()}
-				</Pagination>
+				<Container>
+					<Row>
+						<Col>
+							<Label>Items</Label>
+						</Col>
+						<Col sm='3.5'>
+							<CustomInput type="select" id="itemSize" name="customSelect" bsSize="sm" onChange={this.handlePageSizeChange}>
+								<option value='6'>6</option>
+								<option value='12'>12</option>
+								<option value='24'>24</option>
+								<option value='48'>48</option>
+							</CustomInput>
+						</Col>
+						<Col>
+							<Pagination>
+								{this.getDynamicNavLinks()}
+							</Pagination>
+						</Col>
+					</Row>
+				</Container>
 			</div>
 		)
 	}

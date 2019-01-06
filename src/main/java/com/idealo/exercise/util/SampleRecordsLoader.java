@@ -8,9 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -46,6 +49,26 @@ public class SampleRecordsLoader implements CommandLineRunner {
         List<Category> categoryList = IntStream.range(1, 11).mapToObj(i -> new Category("Category " + i)).collect(Collectors.toList());
         categoryList.add(category);
 
-        this.categoryRepository.saveAll(categoryList);
+//        this.categoryRepository.saveAll(categoryList);
+        parseCSV();
+    }
+
+    private void parseCSV() throws IOException, URISyntaxException {
+        Map<String, Category> categories = new HashMap<>();
+        URI uri = this.getClass().getResource("/records.csv").toURI();
+        Files.lines(Paths.get(uri)).forEach(line -> {
+            String[] parts = line.split(",");
+            String categoryString = parts[0];
+            categories.putIfAbsent(categoryString, createCategory(categoryString));
+            Category category = categories.get(categoryString);
+            category.addItem(new Item(category, parts[1], parts[2], Long.parseLong(parts[3])));
+        });
+        this.categoryRepository.saveAll(categories.values());
+    }
+
+    private Category createCategory(String part) {
+        Category category = new Category(part);
+        category.setItems(new ArrayList<>());
+        return category;
     }
 }

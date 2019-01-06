@@ -1,5 +1,5 @@
 import React from 'react';
-import { Badge, Button, Card, CardBody, CardDeck, CardText, CardTitle, Col, Container, Row } from 'reactstrap';
+import { Badge, Button, Card, CardImg, CardBody, CardDeck, CardText, CardHeader, Col, Container, Row, CardFooter } from 'reactstrap';
 import client from './client';
 import PaginationHandler from './PaginationHandler';
 import SortHandler from './SortHandler';
@@ -11,57 +11,52 @@ class ItemList extends React.Component {
 		this.state = {
 			items: [],
 			currentLink: '',
-			size: '8',
+			size: '6',
 			sort: '',
-			links: {}			
+			links: {}
 		};
 		this.onNavigate = this.onNavigate.bind(this);
-		this.updateAll = this.updateAll.bind(this);
-		this.updateLinks = this.updateLinks.bind(this);
+		this.updateState = this.updateState.bind(this);
 		this.onSort = this.onSort.bind(this);
 		this.onMinMaxChange = this.onMinMaxChange.bind(this);
+		this.onPageSizeChange = this.onPageSizeChange.bind(this);
 	}
 
 	componentDidUpdate(prevProps, prevState) {
 		if (prevProps.categoryId !== this.props.categoryId ||
-			prevProps.minMax !== this.props.minMax || 
-			prevState.sort !== this.state.sort) {
-			this.onUpdateCategoryOrSortOrMinMax();
+			prevProps.minMax !== this.props.minMax ||
+			prevState.sort !== this.state.sort ||
+			prevState.size !== this.state.size) {
+			this.updateItemList();
 		}
 		if (prevState.currentLink != this.state.currentLink) {
-			this.onUpdatePaging();
+			this.updatePaging();
 		}
 		window.scrollTo(0, 0);
 	}
 
-	onUpdateCategoryOrSortOrMinMax() {
-		client({ method: 'GET', path: this.getItemsURI() }).done(this.updateAll);
+	updateItemList() {
+		client({ method: 'GET', path: this.getItemsURI() }).done(this.updateState);
 	}
 
-	onUpdatePaging() {
-		client({ method: 'GET', path: this.state.currentLink }).done(this.updateLinks);
+	updatePaging() {
+		client({ method: 'GET', path: this.state.currentLink }).done(this.updateState);
+	}
+
+	updateState(response) {
+		this.setState({
+			items: response.entity._embedded.items,
+			links: response.entity._links,
+		});
 	}
 
 	getItemsURI() {
-		var baseURI = this.props.host + '/api/items/search/findByPriceBetween?';
-		var withMinMax = baseURI + 'min=' + this.props.minMax.min + '&max=' + this.props.minMax.max;
+		var baseURI = this.props.host + '/api/items/search/findByCategory_IdAndPriceBetween';
+		var withCategory = baseURI + '?id=' + this.props.categoryId;
+		var withMinMax = withCategory + '&min=' + this.props.minMax.min + '&max=' + this.props.minMax.max;
 		var withSort = withMinMax + '&sort=' + this.state.sort;
 		var finalURI = withSort + '&size=' + this.state.size;
 		return finalURI;
-	}
-
-	updateAll(response) {
-		this.setState({
-			items: response.entity._embedded.items,
-			links: response.entity._links,
-		});
-	}
-
-	updateLinks(response) {
-		this.setState({
-			items: response.entity._embedded.items,
-			links: response.entity._links,
-		});
 	}
 
 	onNavigate(newLink) {
@@ -76,9 +71,13 @@ class ItemList extends React.Component {
 		this.setState({ minMax: minMax });
 	}
 
+	onPageSizeChange(pageSize) {
+		this.setState({ size: pageSize });
+	}
+
 	getGroupedItem() {
 		var itemArray = this.state.items;
-		var itemPerRow = 4;
+		var itemPerRow = 3;
 		var itemGrouped = itemArray.map((item, index) => {
 			return index % itemPerRow === 0 ? itemArray.slice(index, index + itemPerRow) : null;
 		}).filter(function (item) {
@@ -108,7 +107,7 @@ class ItemList extends React.Component {
 						</Row>
 						<Row>
 							<Col>
-								<PaginationHandler onNavigate={this.onNavigate} links={this.state.links} />
+								<PaginationHandler onNavigate={this.onNavigate} onPageSizeChange={this.onPageSizeChange} links={this.state.links} />
 							</Col>
 						</Row>
 					</Container>
@@ -137,13 +136,31 @@ class Item extends React.Component {
 	render() {
 		return (
 			<Card>
-				{/* <CardImg top width="100%" src="https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97180&w=318&h=180" /> */}
+				<CardHeader tag="h5">
+					{this.props.item.title}
+				</CardHeader>
+				<CardImg top width="100%" src="https://placeholdit.imgix.net/~text?txtsize=33&txt=318%C3%97180&w=318&h=180" alt="Card image cap" />
 				<CardBody>
-					<CardTitle>{this.props.item.title}</CardTitle>
-					<CardText>{this.props.item.text}</CardText>
-					<h5><Badge color="info">{this.props.item.price}  'EUR</Badge></h5>
-					<Button>View</Button>
+					<CardText>
+						{this.props.item.text}
+					</CardText>
 				</CardBody>
+				<CardFooter className="text-muted">
+					<Col>
+						<Row>
+							<Col>
+								<div class='float-left'>
+									<h5><Badge color="info">{this.props.item.price}  &euro;</Badge></h5>
+								</div>
+							</Col>
+							<Col>
+								<div class='float-right'>
+									<Button>View</Button>
+								</div>
+							</Col>
+						</Row>
+					</Col>
+				</CardFooter>
 			</Card>
 		)
 	}

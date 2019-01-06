@@ -29,4 +29,8 @@ public class Category {
     public void setItems(Collection<Item> items) {
         this.items = items;
     }
+
+    public void addItem(Item item){
+        this.items.add(item);
+    }
 }
