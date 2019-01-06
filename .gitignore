@@ -12,3 +12,4 @@ gui/node_modules
 target
 package-lock.json
 built
+static/

@@ -35,7 +35,7 @@ public class SampleRecordsLoader implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        populateFromCSVFile();
+        populateMockItemsFromCSV();
         populateDummyRecords();
     }
 
@@ -49,7 +49,7 @@ public class SampleRecordsLoader implements CommandLineRunner {
         this.categoryRepository.saveAll(categoryList);
     }
 
-    private void populateFromCSVFile() throws IOException, URISyntaxException {
+    private void populateMockItemsFromCSV() throws IOException, URISyntaxException {
         Map<String, Category> categories = new HashMap<>();
         URI uri = this.getClass().getResource("/records.csv").toURI();
         Files.lines(Paths.get(uri)).forEach(line -> {
